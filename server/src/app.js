@@ -10,7 +10,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors({origin:'http://localhost:5173',  credentials: true  }))
 
 const auth = require('./routes/auth.route');
+const employee = require('./routes/employee.route');
+const attendanceRoutes = require('./routes/attendence.route');
+const leaveRoutes = require('./routes/leave.route');
 
 app.use('/api/auth', auth);
+app.use('/api/employees', employee)  
+app.use('/api/attendance', attendanceRoutes);
+app.use('/api/leave', leaveRoutes);
 
 module.exports = app;
