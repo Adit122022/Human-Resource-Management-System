@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, User, Mail, Lock, Building2, Users, Shield, ChevronDown } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
-import axiosinstance from '../../lib/axios';
+import axiosinstance from '../lib/axios';
 
 
 
@@ -30,8 +30,8 @@ const AuthForm = () => {
       const url = isSignup ? '/api/auth/signup' : '/api/auth/login';
       const res = await axiosinstance.post(url, form);
        console.log(res.data)
+    localStorage.setItem('token' , res.data.token)
     
-      
       toast.success(
         isSignup 
           ? `Welcome ${form.name}! Account created successfully` 
