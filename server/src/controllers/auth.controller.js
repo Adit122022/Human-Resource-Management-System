@@ -1,15 +1,25 @@
-  const bcrypt = require('bcryptjs');
+const bcrypt = require('bcryptjs');
 const User = require('../models/UserModel');
 const jwt = require('jsonwebtoken');
+const config = require('../config/config');
 
 
 module.exports.signup= async (req, res) => {
   const { name, email, password, role } = req.body;
+
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
+
     const user = new User({ name, email, password: hashedPassword, role });
     await user.save();
-    res.status(201).json({ message: 'User registered successfully!' });
+
+    
+    const token = jwt.sign(
+      { id: user._id, role: user.role },config.JWT_SECRET,
+      { expiresIn: '1d' }
+    );
+
+    res.status(201).json({ message: 'User created', token });
   } catch (err) {
     res.status(500).json({ error: 'Something went wrong!' });
   }
@@ -30,8 +40,7 @@ module.exports.signup= async (req, res) => {
 
     
     const token = jwt.sign(
-      { id: user._id, role: user.role },
-      'your_secret_key', 
+      { id: user._id, role: user.role },config.JWT_SECRET, 
       { expiresIn: '1d' }
     );
 

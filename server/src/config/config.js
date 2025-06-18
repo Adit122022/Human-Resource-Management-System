@@ -1,9 +1,9 @@
  require('dotenv').config();
-
-const mongoose = require('mongoose');
+ 
 const _config = {
   PORT: process.env.PORT,
   dbURL:process.env.MONGO_URL,
+  JWT_SECRET:process.env.JWT_SECRET,
   debug: true
 };
 

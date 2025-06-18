@@ -1,12 +1,13 @@
 import React from 'react'
+import AuthForm from './components/Auth/AuthForm'
 
 const App = () => {
   return (
     <div>
       
 
-       hell0 world
-       
+   <AuthForm/>
+
     </div>
   )
 }
