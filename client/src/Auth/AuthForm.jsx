@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import { Eye, EyeOff, User, Mail, Lock, Building2, Users, Shield, ChevronDown } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
 import axiosinstance from '../lib/axios';
+import useAuthStore from '../store/authStore'; // 👈 your Zustand store
+import { useNavigate } from 'react-router-dom'; // for redirection after login
+import { useEffect } from 'react';
+
 
 
 
@@ -16,41 +20,62 @@ const AuthForm = () => {
     role: 'employee'
   });
 
+const {login, isLoggedIn, user } = useAuthStore();
+const navigate = useNavigate();
+
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
 
-    const loadingToast = toast.loading(isSignup ? 'Creating account...' : 'Signing in...');
-
-    try {
-      const url = isSignup ? '/api/auth/signup' : '/api/auth/login';
-      const res = await axiosinstance.post(url, form);
-       console.log(res.data)
-    localStorage.setItem('token' , res.data.token)
-    
-      toast.success(
-        isSignup 
-          ? `Welcome ${form.name}! Account created successfully` 
-          : `Welcome back ! Logged in successfully`,
-        { id: loadingToast }
-      );
+useEffect(() => {
+  if (isLoggedIn) {
+    if (user?.role === 'admin') navigate('/admin');
+    else if (user?.role === 'hr') navigate('/hr');
+    else navigate('/dashboard');
+  }
+}, [isLoggedIn]);
 
 
-      setForm({ name: '', email: '', password: '', role: 'employee' });
-      
-    } catch (err) {
-      toast.error(
-        err.response?.data?.message || err.message || 'Something went wrong. Please try again.',
-        { id: loadingToast }
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  };
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setIsLoading(true);
+  const loadingToast = toast.loading(isSignup ? 'Creating account...' : 'Signing in...');
+
+  try {
+    const url = isSignup ? '/api/auth/signup' : '/api/auth/login';
+    const res = await axiosinstance.post(url, form);
+
+    // Set token and user in Zustand
+    login(res.data.token);
+
+    toast.success(
+      isSignup
+        ? `Welcome ${form.name}! Account created successfully`
+        : `Welcome back! Logged in successfully`,
+      { id: loadingToast }
+    );
+
+    // Reset form
+    setForm({ name: '', email: '', password: '', role: 'employee' });
+
+    // Decode token to determine user role
+    const decoded = JSON.parse(atob(res.data.token.split('.')[1]));
+    if (decoded.role === 'admin') navigate('/admin');
+    else if (decoded.role === 'hr') navigate('/hr');
+    else navigate('/dashboard'); // Employee
+
+  } catch (err) {
+    toast.error(
+      err.response?.data?.message || err.message || 'Something went wrong. Please try again.',
+      { id: loadingToast }
+    );
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   const toggleAuthMode = () => {
     setIsSignup(!isSignup);

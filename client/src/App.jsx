@@ -1,18 +1,15 @@
-import React from 'react'
-import AuthForm from './Auth/AuthForm'
-import Navbar from './components/Layout/Navbar'
+
 import Footer from './components/Layout/Footer'
+import Navbar from './components/Layout/Navbar'
 import AppRouter from './Routes/AppRouter'
 
 const App = () => {
   return (
-    <div>
-      <Navbar/>
-      
+    <>
+<Navbar/> 
 <AppRouter/>
- 
 <Footer/>
-    </div>
+    </>
   )
 }
 
