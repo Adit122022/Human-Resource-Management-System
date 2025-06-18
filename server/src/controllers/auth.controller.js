@@ -22,6 +22,7 @@ module.exports.signup= async (req, res) => {
     res.status(201).json({ message: 'User created', token });
   } catch (err) {
     res.status(500).json({ error: 'Something went wrong!' });
+    console.log(err)
   }
 }
 
