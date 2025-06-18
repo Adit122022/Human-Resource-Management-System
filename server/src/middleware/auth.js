@@ -19,6 +19,7 @@ const authMiddleware = (roles = []) => {
       next();
     } catch (err) {
       res.status(401).json({ message: 'Invalid token' });
+       console.log("AuthMiddleware --> " , err )
     }
   };
 };

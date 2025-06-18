@@ -7,7 +7,7 @@ const leaveSchema = new mongoose.Schema({
   type: { type: String, enum: ['sick', 'casual', 'vacation'], required: true },
   status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
   reason: { type: String },
-  leaveBalance: { type: Number, default: 20 }, // Example: 20 days default
+  leaveBalance: { type: Number, default: 20 },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Leave', leaveSchema);

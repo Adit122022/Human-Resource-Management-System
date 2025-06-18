@@ -1,31 +1,24 @@
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
-const { v2: cloudinary } = require('cloudinary');
+const cloudinary = require('cloudinary').v2;
 const multer = require('multer');
+const path = require('path');
 
-// Configure Cloudinary with your credentials
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// Set up Cloudinary storage for Multer
-const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: 'hrms_profiles', // Folder in Cloudinary to store images
-    allowed_formats: ['jpg', 'jpeg', 'png'], // Restrict to image formats
-    public_id: (req, file) => `${Date.now()}-${file.originalname}`, // Unique filename
-  },
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, 'uploads/'),
+  filename: (req, file, cb) => cb(null, `${Date.now()}-${file.originalname}`),
 });
 
-// Create Multer instance for Cloudinary
 const upload = multer({
   storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB file size limit
+  limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     const filetypes = /jpeg|jpg|png/;
-    const extname = filetypes.test(file.originalname.toLowerCase());
+    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
     const mimetype = filetypes.test(file.mimetype);
     if (extname && mimetype) {
       return cb(null, true);
@@ -34,5 +27,24 @@ const upload = multer({
   },
 });
 
-// Export the upload middleware
-module.exports = { upload, cloudinary };
+const uploadToCloudinary = async (filePath) => {
+  try {
+    const result = await cloudinary.uploader.upload(filePath, {
+      folder: 'hrms_profiles',
+      allowed_formats: ['jpg', 'jpeg', 'png'],
+    });
+    return result.secure_url;
+  } catch (err) {
+    throw new Error(`Cloudinary upload failed: ${err.message}`);
+  }
+};
+
+const deleteFromCloudinary = async (publicId) => {
+  try {
+    await cloudinary.uploader.destroy(`hrms_profiles/${publicId}`);
+  } catch (err) {
+    console.error(`Cloudinary deletion failed: ${err.message}`);
+  }
+};
+
+module.exports = { upload, uploadToCloudinary, deleteFromCloudinary, cloudinary };
