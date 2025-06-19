@@ -13,16 +13,20 @@ const EmployeeDashboard = () => {
         <h1 className="text-3xl font-bold text-gray-900 mb-6">
           Welcome, {user?.name || 'Employee'}
         </h1>
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Profile */}
           <div className="bg-white rounded-xl shadow-md p-6">
             <h2 className="text-xl font-semibold text-gray-800 mb-4">Profile</h2>
             <Link
               to="/profile"
               className="block bg-blue-50 text-blue-600 px-4 py-3 rounded-xl hover:bg-blue-100"
             >
-              View/Edit Profile
+              View / Edit Profile
             </Link>
           </div>
+
+          {/* Attendance */}
           <div className="bg-white rounded-xl shadow-md p-6">
             <h2 className="text-xl font-semibold text-gray-800 mb-4">Attendance</h2>
             <Link
@@ -38,6 +42,8 @@ const EmployeeDashboard = () => {
               View History
             </Link>
           </div>
+
+          {/* Leave */}
           <div className="bg-white rounded-xl shadow-md p-6">
             <h2 className="text-xl font-semibold text-gray-800 mb-4">Leave</h2>
             <Link

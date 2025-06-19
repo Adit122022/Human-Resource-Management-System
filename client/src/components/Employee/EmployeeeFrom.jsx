@@ -5,50 +5,62 @@ import toast from 'react-hot-toast';
 import Navbar from '../Layout/Navbar';
 
 const EmployeeForm = () => {
-  const { id } = useParams();
+  const { id } = useParams(); // If ID exists, it's edit mode
   const navigate = useNavigate();
+
   const [form, setForm] = useState({
     name: '',
-    email: '',
+    // email: '',
     designation: '',
     department: '',
     joinDate: '',
     profileImage: null,
   });
+
+  const [preview, setPreview] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Fetch employee info if editing
   useEffect(() => {
-    if (id) {
-      const fetchEmployee = async () => {
-        try {
-          const res = await axiosinstance.get(`/employees/${id}`);
-          const { name, email } = res.data.user;
-          const { designation, department, joinDate, profileImage } = res.data;
-          setForm({
-            name,
-            email,
-            designation,
-            department,
-            joinDate: joinDate ? joinDate.split('T')[0] : '',
-            profileImage: null,
-          });
-        } catch (err) {
-          toast.error(err.response?.data?.message || 'Error fetching employee');
-        }
-      };
-      fetchEmployee();
-    }
+    if (!id) return;
+
+    const fetchEmployee = async () => {
+      try {
+        const res = await axiosinstance.get(`/employees/${id}`);
+        const { user, designation, department, joinDate, profileImage } = res.data;
+
+        setForm({
+          name: user?.name || '',
+          // email: user?.email || '',
+          designation: designation || '',
+          department: department || '',
+          joinDate: joinDate ? joinDate.split('T')[0] : '',
+          profileImage: null, // will update on change
+        });
+
+        setPreview(profileImage || null);
+      } catch (err) {
+        toast.error(err.response?.data?.message || 'Failed to load employee data');
+      }
+    };
+
+    fetchEmployee();
   }, [id]);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    setForm({ ...form, [name]: files ? files[0] : value });
+    if (files) {
+      setForm({ ...form, [name]: files[0] });
+      setPreview(URL.createObjectURL(files[0]));
+    } else {
+      setForm({ ...form, [name]: value });
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const toastId = toast.loading(id ? 'Updating employee...' : 'Creating employee...');
     setIsLoading(true);
-    const loadingToast = toast.loading(id ? 'Updating employee...' : 'Adding employee...');
 
     try {
       const formData = new FormData();
@@ -58,14 +70,15 @@ const EmployeeForm = () => {
 
       if (id) {
         await axiosinstance.put(`/adminpannel/${id}`, formData);
-        toast.success('Employee updated successfully', { id: loadingToast });
+        toast.success('Employee updated!', { id: toastId });
       } else {
         await axiosinstance.post('/adminpannel', formData);
-        toast.success('Employee added successfully', { id: loadingToast });
+        toast.success('Employee added!', { id: toastId });
       }
+
       navigate('/employees');
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Error saving employee', { id: loadingToast });
+      toast.error(err.response?.data?.message || 'Error saving employee', { id: toastId });
     } finally {
       setIsLoading(false);
     }
@@ -78,17 +91,28 @@ const EmployeeForm = () => {
         <h1 className="text-2xl font-bold text-gray-900 mb-6">
           {id ? 'Edit Employee' : 'Add Employee'}
         </h1>
+
         <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-md p-6 space-y-4">
+          {preview && (
+            <img
+              src={preview}
+              alt="Profile"
+              className="w-24 h-24 rounded-full mx-auto object-cover border mb-4"
+            />
+          )}
+
           <div>
-            <label className="block text-sm font-medium text-gray-700">Name</label>
+            <label className="block text-sm font-medium text-gray-700">Full Name</label>
             <input
               name="name"
               value={form.name}
               onChange={handleChange}
-              className="w-full px-4 py-2 border rounded-xl"
               required
+              className="w-full px-4 py-2 border rounded-xl"
+              placeholder="Employee Name"
             />
           </div>
+{/* 
           <div>
             <label className="block text-sm font-medium text-gray-700">Email</label>
             <input
@@ -96,20 +120,24 @@ const EmployeeForm = () => {
               type="email"
               value={form.email}
               onChange={handleChange}
-              className="w-full px-4 py-2 border rounded-xl"
               required
+              className="w-full px-4 py-2 border rounded-xl"
+              placeholder="email@example.com"
             />
-          </div>
+          </div> */}
+
           <div>
             <label className="block text-sm font-medium text-gray-700">Designation</label>
             <input
               name="designation"
               value={form.designation}
               onChange={handleChange}
-              className="w-full px-4 py-2 border rounded-xl"
               required
+              className="w-full px-4 py-2 border rounded-xl"
+              placeholder="Software Developer"
             />
           </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700">Department</label>
             <input
@@ -117,8 +145,10 @@ const EmployeeForm = () => {
               value={form.department}
               onChange={handleChange}
               className="w-full px-4 py-2 border rounded-xl"
+              placeholder="Engineering"
             />
           </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700">Join Date</label>
             <input
@@ -129,16 +159,18 @@ const EmployeeForm = () => {
               className="w-full px-4 py-2 border rounded-xl"
             />
           </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700">Profile Image</label>
             <input
               name="profileImage"
               type="file"
+              accept="image/*"
               onChange={handleChange}
               className="w-full px-4 py-2 border rounded-xl"
-              accept="image/*"
             />
           </div>
+
           <button
             type="submit"
             disabled={isLoading}

@@ -166,7 +166,6 @@ const handleSubmit = async (e) => {
                   >
                     <option value="employee">Employee</option>
                     <option value="hr">HR Manager</option>
-                    <option value="admin">Administrator</option>
                   </select>
                   <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
                 </div>

@@ -4,7 +4,6 @@ import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 import { Trash2, Edit } from 'lucide-react';
 
-
 const EmployeeList = () => {
   const [employees, setEmployees] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -15,7 +14,6 @@ const EmployeeList = () => {
       try {
         const res = await axiosinstance.get('/adminpannel');
         setEmployees(res.data);
-        console.log(res.data)
       } catch (err) {
         toast.error(err.response?.data?.message || 'Error fetching employees');
       } finally {
@@ -27,13 +25,13 @@ const EmployeeList = () => {
 
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this employee?')) return;
-    const loadingToast = toast.loading('Deleting employee...');
+    const toastId = toast.loading('Deleting employee...');
     try {
       await axiosinstance.delete(`/employees/${id}`);
-      setEmployees(employees.filter((emp) => emp.user._id !== id));
-      toast.success('Employee deleted successfully', { id: loadingToast });
+      setEmployees((prev) => prev.filter((emp) => emp.user._id !== id));
+      toast.success('Employee deleted', { id: toastId });
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Error deleting employee', { id: loadingToast });
+      toast.error(err.response?.data?.message || 'Error deleting', { id: toastId });
     }
   };
 
@@ -42,25 +40,33 @@ const EmployeeList = () => {
 
   return (
     <div className="overflow-x-auto">
-      <table className="min-w-full mt-12 divide-y divide-gray-200">
+      <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Designation</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Designation</th>
+            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Department</th>
+            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
           {employees.map((employee) => (
             <tr key={employee.user._id}>
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{employee.user.name}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{employee.user.email}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{employee.designation}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{employee.department || '-'}</td>
-              <td className="px-6 py-4 whitespace-nowrap flex text-sm font-medium">
-                <Link to={`/adminpannel/edit/${employee.user._id}`} className="text-blue-600 hover:text-blue-800 mr-4">
+              <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900 font-medium">
+                {employee.user.name}
+              </td>
+              <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                {employee.user.email}
+              </td>
+              <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                {employee.designation || '-'}
+              </td>
+              <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                {employee.department || '-'}
+              </td>
+              <td className="px-4 py-3 whitespace-nowrap text-sm font-medium flex gap-4">
+                <Link to={`/employees/edit/${employee.user._id}`} className="text-blue-600 hover:text-blue-800">
                   <Edit className="w-5 h-5" />
                 </Link>
                 <button

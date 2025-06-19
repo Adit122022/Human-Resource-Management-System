@@ -43,7 +43,7 @@ exports.addEmployee = async (req, res) => {
     res.status(201).json({ message: 'Employee added successfully', employee });
   } catch (err) {
     if (req.file) await fs.unlink(req.file.path).catch(() => {});
-    console.error('Add Employee Error:-->', err);
+    // console.error('Add Employee Error:-->', err);
     res.status(500).json({ message: 'Error adding employee', error: err.message });
   }
 };
@@ -74,7 +74,7 @@ exports.updateEmployee = async (req, res) => {
     res.json({ message: 'Employee updated successfully', employee: updatedEmployee });
   } catch (err) {
     if (req.file) await fs.unlink(req.file.path).catch(() => {});
-    console.error('Update Employee Error:', err);
+    // console.error('Update Employee Error:', err);
     res.status(500).json({ message: 'Error updating employee', error: err.message });
   }
 };
@@ -94,7 +94,7 @@ exports.deleteEmployee = async (req, res) => {
     await User.findByIdAndDelete(id);
     res.json({ message: 'Employee deleted successfully' });
   } catch (err) {
-    console.error('Delete Employee Error:', err);
+    // console.error('Delete Employee Error:', err);
     res.status(500).json({ message: 'Error deleting employee', error: err.message });
   }
 };
@@ -103,11 +103,11 @@ exports.deleteEmployee = async (req, res) => {
 exports.getAllEmployees = async (req, res) => {
     try {
         const employees = await Employee.find().populate('user', 'name email role')
-        console.log(employees)
+        // console.log(employees)
         const validEmployees = employees.filter(emp => emp.user);
         res.json(validEmployees);
     } catch (err) {
-      console.error('Get All Employees Error:', err);
+    //   console.error('Get All Employees Error:', err);
     res.status(500).json({ message: 'Error fetching employees', error: err.message });
   }
 };

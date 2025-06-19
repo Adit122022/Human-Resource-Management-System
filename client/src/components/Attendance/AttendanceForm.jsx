@@ -17,26 +17,36 @@ const AttendanceForm = () => {
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
+const fullISO = (date, time) => new Date(`${date}T${time}:00`).toISOString();
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  setIsLoading(true);
+  const loadingToast = toast.loading('Logging attendance...');
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    const loadingToast = toast.loading('Logging attendance...');
+  const { date, status, checkIn, checkOut } = form;
 
-    try {
-      await axiosinstance.post('/attendance', form);
-      toast.success('Attendance logged successfully', { id: loadingToast });
-      navigate('/attendance');
-    } catch (err) {
-      toast.error(err.response?.data?.message || 'Error logging attendance', { id: loadingToast });
-    } finally {
-      setIsLoading(false);
-    }
+  const requestBody = {
+    date: new Date(date).toISOString(), // convert to full ISO
+    status,
+    checkIn: checkIn ? fullISO(date, checkIn) : null,
+    checkOut: checkOut ? fullISO(date, checkOut) : null,
   };
+
+  try {
+    await axiosinstance.post('/attendance', requestBody);
+    toast.success('Attendance logged successfully', { id: loadingToast });
+    navigate('/attendance');
+  } catch (err) {
+    toast.error(err.response?.data?.message || 'Error logging attendance', { id: loadingToast });
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <Navbar />
+   
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <h1 className="text-2xl font-bold text-gray-900 mb-6">Log Attendance</h1>
         <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-md p-6 space-y-4">

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axiosinstance from '../../lib/axios';
 import toast from 'react-hot-toast';
-import Navbar from '../Layout/Navbar';
+
 import useAuthStore from '../../store/authStore';
 
 const AttendanceHistory = () => {
@@ -30,7 +30,7 @@ const AttendanceHistory = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <Navbar />
+    
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <h1 className="text-2xl font-bold text-gray-900 mb-6">Attendance History</h1>
         <div className="bg-white rounded-xl shadow-md overflow-x-auto">
