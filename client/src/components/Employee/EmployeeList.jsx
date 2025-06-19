@@ -3,6 +3,7 @@ import axiosinstance from '../../lib/axios';
 import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 import { Trash2, Edit } from 'lucide-react';
+import Navbar from '../Layout/Navbar';
 
 const EmployeeList = () => {
   const [employees, setEmployees] = useState([]);
@@ -40,7 +41,8 @@ const EmployeeList = () => {
 
   return (
     <div className="overflow-x-auto">
-      <table className="min-w-full divide-y divide-gray-200">
+        <Navbar/>
+      <table className="min-w-full mt-12 divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
@@ -57,7 +59,7 @@ const EmployeeList = () => {
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{employee.user.email}</td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{employee.designation}</td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{employee.department || '-'}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+              <td className="px-6 py-4 whitespace-nowrap flex text-sm font-medium">
                 <Link to={`/employees/edit/${employee.user._id}`} className="text-blue-600 hover:text-blue-800 mr-4">
                   <Edit className="w-5 h-5" />
                 </Link>

@@ -41,7 +41,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     logout();
-    window.location.href = "/login";
+    window.location.href = "/auth";
   };
 
   if (!user) return <AuthForm/>;

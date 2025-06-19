@@ -44,7 +44,7 @@ const handleSubmit = async (e) => {
   const loadingToast = toast.loading(isSignup ? 'Creating account...' : 'Signing in...');
 
   try {
-    const url = isSignup ? '/api/auth/signup' : '/api/auth/login';
+    const url = isSignup ? '/auth/signup' : '/auth/login';
     const res = await axiosinstance.post(url, form);
 
     // Set token and user in Zustand
