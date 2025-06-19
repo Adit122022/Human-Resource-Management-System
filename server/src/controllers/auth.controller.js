@@ -3,6 +3,7 @@ const User = require('../models/UserModel');
 const jwt = require('jsonwebtoken');
 const config = require('../config/config');
 const EmployeeModel = require('../models/EmployeeModel');
+const UserModel = require('../models/UserModel');
 
 
 module.exports.signup= async (req, res) => {
@@ -59,3 +60,7 @@ module.exports.signup= async (req, res) => {
     res.status(500).json({ message: 'Something went wrong!' });
   }
 }
+ module.exports.getUsers =async(req,res)=>{
+   let data = UserModel.findById({})
+   res.send(req.user)
+ }
