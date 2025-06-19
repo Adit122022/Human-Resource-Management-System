@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/UserModel');
 const jwt = require('jsonwebtoken');
 const config = require('../config/config');
+const EmployeeModel = require('../models/EmployeeModel');
 
 
 module.exports.signup= async (req, res) => {
@@ -13,6 +14,14 @@ module.exports.signup= async (req, res) => {
     const user = new User({ name, email, password: hashedPassword, role });
     await user.save();
 
+    if (role === 'employee') {
+  await EmployeeModel.create({
+    user: user._id,
+    designation: 'Not Assigned',
+    department: 'Not Assigned',
+    joinDate: new Date(),
+  });
+}
     
     const token = jwt.sign(
       { id: user._id, role: user.role },config.JWT_SECRET,

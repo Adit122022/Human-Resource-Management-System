@@ -1,6 +1,7 @@
 const User = require('../models/UserModel');
 const Employee = require('../models/EmployeeModel');
 const bcrypt = require('bcryptjs');
+const fs = require('fs').promises;
 const { uploadToCloudinary, deleteFromCloudinary } = require('../services/cloudinary');
 
 exports.addEmployee = async (req, res) => {
@@ -98,13 +99,15 @@ exports.deleteEmployee = async (req, res) => {
   }
 };
 
+
 exports.getAllEmployees = async (req, res) => {
-  try {
-    const employees = await Employee.find().populate('user', 'name email role');
-    console.log(employees)
-    res.json(employees);
-  } catch (err) {
-    console.error('Get All Employees Error:', err);
+    try {
+        const employees = await Employee.find().populate('user', 'name email role')
+        console.log(employees)
+        const validEmployees = employees.filter(emp => emp.user);
+        res.json(validEmployees);
+    } catch (err) {
+      console.error('Get All Employees Error:', err);
     res.status(500).json({ message: 'Error fetching employees', error: err.message });
   }
 };

@@ -3,7 +3,7 @@ const Attendance = require('../models/AttendanceModel');
 // Mark Attendance (Employee, HR, Admin)
 exports.markAttendance = async (req, res) => {
   const { date, status, checkIn, checkOut } = req.body;
-
+console.log("MarkAttendence-->",req.user)
   try {
     const attendance = new Attendance({
       userId: req.user.id,

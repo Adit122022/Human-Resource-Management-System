@@ -1,12 +1,36 @@
-const EmployeeModel = require("../models/EmployeeModel");
+const Employee = require("../models/EmployeeModel");
+
 exports.getEmployeeProfile = async (req, res) => {
   try {
-    const employee = await EmployeeModel.findOne({ user: req.user.id }).populate('user', 'name email role');
-    console.log(employee)
-    if (!employee) return res.status(404).json({ message: 'Employee profile not found' });
-    res.json(employee);
+    const user = req.user;
+
+    const employee = await Employee.findOne({ user: user._id }).populate('user', 'name email role');
+
+    if (!employee) {
+      return res.status(404).json({
+        message: 'Employee profile not found',
+        user: {
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        },
+      });
+    }
+
+    res.json({
+      user: {
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+      profile: {
+        designation: employee.designation,
+        department: employee.department,
+        joinDate: employee.joinDate,
+        profileImage: employee.profileImage,
+      },
+    });
   } catch (err) {
-    console.error('Get Profile Error:', err.message);
     res.status(500).json({ message: 'Error fetching profile', error: err.message });
   }
 };

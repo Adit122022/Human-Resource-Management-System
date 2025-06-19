@@ -3,7 +3,7 @@ import axiosinstance from '../../lib/axios';
 import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 import { Trash2, Edit } from 'lucide-react';
-import Navbar from '../Layout/Navbar';
+
 
 const EmployeeList = () => {
   const [employees, setEmployees] = useState([]);
@@ -15,6 +15,7 @@ const EmployeeList = () => {
       try {
         const res = await axiosinstance.get('/adminpannel');
         setEmployees(res.data);
+        console.log(res.data)
       } catch (err) {
         toast.error(err.response?.data?.message || 'Error fetching employees');
       } finally {
@@ -59,7 +60,7 @@ const EmployeeList = () => {
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{employee.designation}</td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{employee.department || '-'}</td>
               <td className="px-6 py-4 whitespace-nowrap flex text-sm font-medium">
-                <Link to={`/employees/edit/${employee.user._id}`} className="text-blue-600 hover:text-blue-800 mr-4">
+                <Link to={`/adminpannel/edit/${employee.user._id}`} className="text-blue-600 hover:text-blue-800 mr-4">
                   <Edit className="w-5 h-5" />
                 </Link>
                 <button

@@ -4,9 +4,14 @@ const authMiddleware = require('../middleware/auth');
 const { addEmployee, updateEmployee, deleteEmployee, getAllEmployees } = require('../controllers/admin.controller');
 const { upload } = require('../services/cloudinary');
 
+
+//  app.use('/api/adminpannel', adminHrpannel) 
 router.post('/', authMiddleware(['admin', 'hr']), upload.single('profileImage'), addEmployee);
 router.put('/:id', authMiddleware(['admin', 'hr']), upload.single('profileImage'), updateEmployee);
 router.delete('/:id', authMiddleware(['admin']), deleteEmployee);
 router.get('/', authMiddleware(['admin', 'hr']), getAllEmployees);
 
  module.exports = router
+
+ 
+ 

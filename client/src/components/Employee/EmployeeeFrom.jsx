@@ -57,10 +57,10 @@ const EmployeeForm = () => {
       });
 
       if (id) {
-        await axiosinstance.put(`/employees/${id}`, formData);
+        await axiosinstance.put(`/adminpannel/${id}`, formData);
         toast.success('Employee updated successfully', { id: loadingToast });
       } else {
-        await axiosinstance.post('/employees', formData);
+        await axiosinstance.post('/adminpannel', formData);
         toast.success('Employee added successfully', { id: loadingToast });
       }
       navigate('/employees');
