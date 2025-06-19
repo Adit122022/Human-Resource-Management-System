@@ -1,9 +1,62 @@
-import React from 'react'
+import React from 'react';
+import Navbar from '../components/Layout/Navbar';
+import { Link } from 'react-router-dom';
+import useAuthStore from '../store/authStore';
 
 const EmployeeDashboard = () => {
-  return (
-    <div>EmployeeDashboard</div>
-  )
-}
+  const { user } = useAuthStore();
 
-export default EmployeeDashboard
+  return (
+    <div className="min-h-screen bg-gray-100">
+      <Navbar />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-6">
+          Welcome, {user?.name || 'Employee'}
+        </h1>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-white rounded-xl shadow-md p-6">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">Profile</h2>
+            <Link
+              to="/profile"
+              className="block bg-blue-50 text-blue-600 px-4 py-3 rounded-xl hover:bg-blue-100"
+            >
+              View/Edit Profile
+            </Link>
+          </div>
+          <div className="bg-white rounded-xl shadow-md p-6">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">Attendance</h2>
+            <Link
+              to="/attendance/log"
+              className="block bg-blue-50 text-blue-600 px-4 py-3 rounded-xl hover:bg-blue-100"
+            >
+              Log Attendance
+            </Link>
+            <Link
+              to="/attendance"
+              className="block bg-blue-50 text-blue-600 px-4 py-3 rounded-xl hover:bg-blue-100 mt-2"
+            >
+              View History
+            </Link>
+          </div>
+          <div className="bg-white rounded-xl shadow-md p-6">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">Leave</h2>
+            <Link
+              to="/leave/apply"
+              className="block bg-blue-50 text-blue-600 px-4 py-3 rounded-xl hover:bg-blue-100"
+            >
+              Apply for Leave
+            </Link>
+            <Link
+              to="/leave"
+              className="block bg-blue-50 text-blue-600 px-4 py-3 rounded-xl hover:bg-blue-100 mt-2"
+            >
+              View Leave History
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default EmployeeDashboard;
