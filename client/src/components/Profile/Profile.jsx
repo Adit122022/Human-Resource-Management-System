@@ -19,7 +19,8 @@ const Profile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await axiosinstance.get('/profile');
+        const res = await axiosinstance.get('/employees/profile');
+        console.log("PROFILE --> " , res)
         if (user.role === 'employee') {
           const { name, email } = res.data.user;
           const { designation, department, joinDate, profileImage } = res.data;

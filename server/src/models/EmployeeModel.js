@@ -5,7 +5,7 @@ const employeeSchema = new mongoose.Schema({
   designation: { type: String, required: true },
   department: { type: String },
   joinDate: { type: Date },
-  profileImage: { type: String }
+  profileImage: { type: String ,default:"https://pbs.twimg.com/profile_images/1740014865933029376/33ducs-8_400x400.jpg"},
 }, { timestamps: true });
 
 module.exports = mongoose.model('Employee', employeeSchema);

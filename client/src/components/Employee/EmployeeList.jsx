@@ -13,7 +13,7 @@ const EmployeeList = () => {
     const fetchEmployees = async () => {
       setIsLoading(true);
       try {
-        const res = await axiosinstance.get('/employees');
+        const res = await axiosinstance.get('/adminpannel');
         setEmployees(res.data);
       } catch (err) {
         toast.error(err.response?.data?.message || 'Error fetching employees');
@@ -41,7 +41,6 @@ const EmployeeList = () => {
 
   return (
     <div className="overflow-x-auto">
-        <Navbar/>
       <table className="min-w-full mt-12 divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>

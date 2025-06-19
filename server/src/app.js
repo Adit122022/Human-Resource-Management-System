@@ -13,9 +13,11 @@ const auth = require('./routes/auth.route');
 const employee = require('./routes/employee.route');
 const attendanceRoutes = require('./routes/attendence.route');
 const leaveRoutes = require('./routes/leave.route');
+ const adminHrpannel = require('./routes/admin.routes')
 
 app.use('/api/auth', auth);
 app.use('/api/employees', employee)  
+app.use('/api/adminpannel', adminHrpannel)  
 app.use('/api/attendance', attendanceRoutes);
 app.use('/api/leave', leaveRoutes);
 
