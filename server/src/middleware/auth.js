@@ -10,8 +10,7 @@ const authMiddleware = (roles = []) => {
 
     try {
       const decoded = jwt.verify(token, config.JWT_SECRET);
-      req.user = decoded; // Attach user info (id, role) to request
-
+      req.user = decoded; 
       if (roles.length && !roles.includes(decoded.role)) {
         return res.status(403).json({ message: 'Access denied' });
       }

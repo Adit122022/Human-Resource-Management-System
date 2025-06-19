@@ -24,6 +24,7 @@ exports.getAttendanceHistory = async (req, res) => {
   try {
     const userId = req.user.role === 'admin' || req.user.role === 'hr' ? req.query.userId : req.user.id;
     const attendance = await Attendance.find({ userId }).sort({ date: -1 });
+    // console.log(attendance)
     res.json(attendance);
   } catch (err) {
     res.status(500).json({ message: 'Error fetching attendance history', error: err.message });
