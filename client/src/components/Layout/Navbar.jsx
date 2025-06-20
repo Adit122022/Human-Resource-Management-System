@@ -7,11 +7,16 @@ import AuthForm from "../../Auth/AuthForm";
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user, logout } = useAuthStore();
+  
 
   const navigationItems = [
     {
       name: "Dashboard",
-      to: "/dashboard",
+      to:   user?.role === "admin"
+        ? "/admin"
+        : user?.role === "hr"
+        ? "/hr-dashboard"
+        : "/dashboard",
       icon: Home,
       roles: ["employee", "hr", "admin"],
     },

@@ -5,7 +5,7 @@ exports.getEmployeeProfile = async (req, res) => {
     const user = req.user;
 
     const employee = await Employee.findOne({ user: user.id }).populate('user', 'name email role');
-    console.log(employee)
+    // console.log(employee)
 
     if (!employee) {
       return res.status(404).json({
