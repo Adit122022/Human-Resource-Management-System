@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axiosinstance from "../../lib/axios";
 import toast from "react-hot-toast";
 import Navbar from "../Layout/Navbar";
+import AdminProfilePanel from "../Admin/AdminProfilePanel";
 
 const Profile = () => {
   const [data, setData] = useState(null);
@@ -17,17 +18,16 @@ const Profile = () => {
   const [editMode, setEditMode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Fetch profile
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const res = await axiosinstance.get("/employees/profile");
+        console.log("Profile -->", res.data);
 
-         console.log("Profile-->",res.data)
-        const { _id, name, email } = res.data.user; // ✅ include _id
+        const { _id, name = "", email = "", role = "" } = res.data.user;
 
         setData({
-          user: { _id, name, email }, // ✅ ensure _id is preserved
+          user: { _id, name, email, role },
           profile: res.data.profile,
         });
 
@@ -42,6 +42,7 @@ const Profile = () => {
           joinDate: joinDate ? joinDate.split("T")[0] : "",
           profileImage: null,
         });
+
         setPreview(profileImage || null);
       } catch (err) {
         toast.error(err.response?.data?.message || "Error fetching profile");
@@ -72,6 +73,7 @@ const Profile = () => {
       });
 
       await axiosinstance.put(`/adminpannel/${data.user._id}`, formData);
+
       toast.success("Profile updated successfully", { id: loadingToast });
       setEditMode(false);
     } catch (err) {
@@ -91,157 +93,162 @@ const Profile = () => {
   return (
     <div className="min-h-screen bg-gray-100">
       <Navbar />
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="bg-white rounded-2xl shadow-md p-6">
-          {preview && (
-            <img
-              src={preview}
-              alt="Profile"
-              className="w-32 h-32 rounded-full mx-auto mb-4 object-cover border"
-            />
-          )}
 
-          {!editMode ? (
-            <>
-              <h2 className="text-2xl font-bold text-center mb-1">
-                {user?.name}
-              </h2>
-              <p className="text-center text-gray-500">{user?.email}</p>
-              <span className="block text-center text-xs px-3 py-1 bg-blue-100 text-blue-600 rounded-full mt-2 capitalize">
-                {user?.role}
-              </span>
+      {user.role === "admin" ? (
+        <AdminProfilePanel admin={user} />
+      ) : (
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+          <div className="bg-white rounded-2xl shadow-md p-6">
+            {preview && (
+              <img
+                src={preview}
+                alt="Profile"
+                className="w-32 h-32 rounded-full mx-auto mb-4 object-cover border"
+              />
+            )}
 
-              <div className="mt-6 space-y-2 text-sm text-gray-700">
-                <div className="flex justify-between">
-                  <span className="font-medium">Designation:</span>
-                  <span>{profileData?.designation || "Not Assigned"}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="font-medium">Department:</span>
-                  <span>{profileData?.department || "Not Assigned"}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="font-medium">Join Date:</span>
-                  <span>
-                    {profileData?.joinDate
-                      ? new Date(profileData.joinDate).toLocaleDateString()
-                      : "-"}
-                  </span>
-                </div>
-              </div>
+            {!editMode ? (
+              <>
+                <h2 className="text-2xl font-bold text-center mb-1">
+                  {user?.name}
+                </h2>
+                <p className="text-center text-gray-500">{user?.email}</p>
+                <span className="block text-center text-xs px-3 py-1 bg-blue-100 text-blue-600 rounded-full mt-2 capitalize">
+                  {user?.role}
+                </span>
 
-              <button
-                onClick={() => setEditMode(true)}
-                className="w-full mt-6 bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700"
-              >
-                Update Profile
-              </button>
-            </>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <h2 className="text-xl font-semibold text-gray-800 text-center">
-                Edit Profile
-              </h2>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Name
-                </label>
-                <input
-                  name="name"
-                  value={profile.name}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border rounded-xl"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Email
-                </label>
-                <input
-                  name="email"
-                  type="email"
-                  value={profile.email}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border rounded-xl"
-                  required
-                />
-              </div>
-
-              {user.role === "employee" && (
-                <>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Designation
-                    </label>
-                    <input
-                      name="designation"
-                      value={profile.designation}
-                      onChange={handleChange}
-                      className="w-full px-4 py-2 border rounded-xl"
-                      required
-                    />
+                <div className="mt-6 space-y-2 text-sm text-gray-700">
+                  <div className="flex justify-between">
+                    <span className="font-medium">Designation:</span>
+                    <span>{profileData?.designation || "Not Assigned"}</span>
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Department
-                    </label>
-                    <input
-                      name="department"
-                      value={profile.department}
-                      onChange={handleChange}
-                      className="w-full px-4 py-2 border rounded-xl"
-                    />
+                  <div className="flex justify-between">
+                    <span className="font-medium">Department:</span>
+                    <span>{profileData?.department || "Not Assigned"}</span>
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Join Date
-                    </label>
-                    <input
-                      name="joinDate"
-                      type="date"
-                      value={profile.joinDate}
-                      onChange={handleChange}
-                      className="w-full px-4 py-2 border rounded-xl"
-                    />
+                  <div className="flex justify-between">
+                    <span className="font-medium">Join Date:</span>
+                    <span>
+                      {profileData?.joinDate
+                        ? new Date(profileData.joinDate).toLocaleDateString()
+                        : "-"}
+                    </span>
                   </div>
-                </>
-              )}
+                </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Profile Image
-                </label>
-                <input
-                  name="profileImage"
-                  type="file"
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border rounded-xl"
-                  accept="image/*"
-                />
-              </div>
-
-              <div className="flex gap-4">
                 <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="flex-1 bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700 disabled:opacity-50"
+                  onClick={() => setEditMode(true)}
+                  className="w-full mt-6 bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700"
                 >
-                  {isLoading ? "Updating..." : "Save Changes"}
+                  Update Profile
                 </button>
-                <button
-                  type="button"
-                  onClick={() => setEditMode(false)}
-                  className="flex-1 bg-gray-300 text-gray-800 py-2 rounded-xl hover:bg-gray-400"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          )}
+              </>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <h2 className="text-xl font-semibold text-gray-800 text-center">
+                  Edit Profile
+                </h2>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Name
+                  </label>
+                  <input
+                    name="name"
+                    value={profile.name}
+                    onChange={handleChange}
+                    className="w-full px-4 py-2 border rounded-xl"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Email
+                  </label>
+                  <input
+                    name="email"
+                    type="email"
+                    value={profile.email}
+                    onChange={handleChange}
+                    className="w-full px-4 py-2 border rounded-xl"
+                    required
+                  />
+                </div>
+
+                {user.role === "employee" && (
+                  <>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Designation
+                      </label>
+                      <input
+                        name="designation"
+                        value={profile.designation}
+                        onChange={handleChange}
+                        className="w-full px-4 py-2 border rounded-xl"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Department
+                      </label>
+                      <input
+                        name="department"
+                        value={profile.department}
+                        onChange={handleChange}
+                        className="w-full px-4 py-2 border rounded-xl"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Join Date
+                      </label>
+                      <input
+                        name="joinDate"
+                        type="date"
+                        value={profile.joinDate}
+                        onChange={handleChange}
+                        className="w-full px-4 py-2 border rounded-xl"
+                      />
+                    </div>
+                  </>
+                )}
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Profile Image
+                  </label>
+                  <input
+                    name="profileImage"
+                    type="file"
+                    onChange={handleChange}
+                    className="w-full px-4 py-2 border rounded-xl"
+                    accept="image/*"
+                  />
+                </div>
+
+                <div className="flex gap-4">
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="flex-1 bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700 disabled:opacity-50"
+                  >
+                    {isLoading ? "Updating..." : "Save Changes"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setEditMode(false)}
+                    className="flex-1 bg-gray-300 text-gray-800 py-2 rounded-xl hover:bg-gray-400"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

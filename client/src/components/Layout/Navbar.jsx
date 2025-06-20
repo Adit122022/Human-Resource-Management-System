@@ -38,11 +38,17 @@ const Navbar = () => {
       icon: Calendar,
       roles: ["employee", "hr", "admin"],
     },
+    {
+  name: "Leave Approvals",
+  to: "/admin/leave-approval", 
+  icon: Calendar,
+  roles: ["admin", "hr"],
+},
   ];
 
-  const filteredNavItems = navigationItems.filter((item) =>
-    item.roles.includes(user?.role?.toLowerCase())
-  );
+ const filteredNavItems = navigationItems.filter((item) =>
+  item.roles.includes(user?.role?.toLowerCase())
+);
 
   const handleLogout = () => {
     logout();

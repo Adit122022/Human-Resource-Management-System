@@ -24,11 +24,24 @@ exports.markAttendance = async (req, res) => {
 // Get Attendance History (Employee, HR, Admin)
 exports.getAttendanceHistory = async (req, res) => {
   try {
-    const userId = req.user.role === 'admin' || req.user.role === 'hr' ? req.query.userId : req.user.id;
-    const attendance = await Attendance.find({ userId }).sort({ date: -1 });
-    // console.log(attendance)
-    res.json(attendance);
+    let attendance;
+
+    if (req.user.role === 'admin' || req.user.role === 'hr') {
+      // Show all attendance (admin & hr)
+      attendance = await Attendance.find()
+        .sort({ date: -1 })
+        .populate('userId', 'name email role');
+    } else {
+      // Only own attendance (employee)
+      attendance = await Attendance.find({ userId: req.user.id })
+        .sort({ date: -1 });
+    }
+
+    res.status(200).json(attendance);
   } catch (err) {
-    res.status(500).json({ message: 'Error fetching attendance history', error: err.message });
+    res.status(500).json({
+      message: 'Error fetching attendance history',
+      error: err.message,
+    });
   }
 };

@@ -1,7 +1,7 @@
 const Leave = require('../models/LeaveModel');
 
 // Apply for Leave (Employee, HR, Admin)
-exports.applyLeave = async (req, res) => {
+module.exports.applyLeave = async (req, res) => {
   const { startDate, endDate, type, reason } = req.body;
 
   try {
@@ -20,7 +20,7 @@ exports.applyLeave = async (req, res) => {
 };
 
 // Approve/Reject Leave (HR, Admin)
-exports.updateLeaveStatus = async (req, res) => {
+module.exports.updateLeaveStatus = async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
 
@@ -36,18 +36,28 @@ exports.updateLeaveStatus = async (req, res) => {
 };
 
 // Get Leave History (Employee, HR, Admin)
-exports.getLeaveHistory = async (req, res) => {
+module.exports.getLeaveHistory = async (req, res) => {
   try {
-    const userId = req.user.role === 'admin' || req.user.role === 'hr' ? req.query.userId : req.user.id;
-    const leaves = await Leave.find({ userId }).sort({ createdAt: -1 });
+    let leaves;
+
+    if (req.user.role === 'admin' || req.user.role === 'hr') {
+      leaves = await Leave.find()
+        .sort({ createdAt: -1 })
+        .populate('userId', 'name email');
+    } else {
+      leaves = await Leave.find({ userId: req.user.id })
+        .sort({ createdAt: -1 });
+    }
+
     res.json(leaves);
   } catch (err) {
     res.status(500).json({ message: 'Error fetching leave history', error: err.message });
   }
 };
 
+
 // Get Leave Balance (Employee, HR, Admin)
-exports.getLeaveBalance = async (req, res) => {
+module.exports.getLeaveBalance = async (req, res) => {
   try {
     const leaves = await Leave.find({ userId: req.user.id, status: 'approved' });
     const usedDays = leaves.reduce((total, leave) => {

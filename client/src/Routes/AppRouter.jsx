@@ -15,6 +15,7 @@ import HeroSection from "../Pages/HeroSection";
 import AttendancePage from "../Pages/AttendancePage";
 import EmployeePage from "../Pages/EmployeePage";
 import LeavePage from "../Pages/LeavePage";
+import AdminLeaveApproval from "../components/Admin/AdminLeaveApproval";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { isLoggedIn, user } = useAuthStore();
@@ -76,7 +77,7 @@ const AppRouter = () => {
           </ProtectedRoute>
         }
       />
-    
+
       <Route
         path="/attendance/log"
         element={
@@ -114,6 +115,15 @@ const AppRouter = () => {
         element={
           <ProtectedRoute allowedRoles={["admin", "hr", "employee"]}>
             <Profile />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/admin/leave-approval"
+        element={
+          <ProtectedRoute allowedRoles={["admin", "hr"]}>
+            <AdminLeaveApproval />
           </ProtectedRoute>
         }
       />

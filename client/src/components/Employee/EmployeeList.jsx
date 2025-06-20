@@ -27,7 +27,7 @@ const EmployeeList = () => {
     if (!window.confirm('Are you sure you want to delete this employee?')) return;
     const toastId = toast.loading('Deleting employee...');
     try {
-      await axiosinstance.delete(`/employees/${id}`);
+      await axiosinstance.delete(`/adminpannel/${id}`);
       setEmployees((prev) => prev.filter((emp) => emp.user._id !== id));
       toast.success('Employee deleted', { id: toastId });
     } catch (err) {

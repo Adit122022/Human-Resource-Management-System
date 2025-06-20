@@ -1,25 +1,29 @@
-const Employee = require("../models/EmployeeModel");
+const EmployeeModel = require("../models/EmployeeModel");
+const UserModel = require("../models/UserModel");
 
-exports.getEmployeeProfile = async (req, res) => {
+// controllers/profile.controller.js
+module.exports.getProfile = async (req, res) => {
   try {
-    const user = req.user;
+    const user = await UserModel.findById(req.user.id);
 
-    const employee = await Employee.findOne({ user: user.id }).populate('user', 'name email role');
-    // console.log(employee)
+    const employee = await EmployeeModel.findOne({ user: user.id }).populate('user', 'name email role');
 
     if (!employee) {
-      return res.status(404).json({
-        message: 'Employee profile not found',
+      // 👇 Handle Admin or HR users who don’t have an employee profile
+      return res.status(200).json({
         user: {
-         name: employee.user.name,
-        email: employee.user.email,
-        role: employee.user.role,
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
         },
+        profile: null,
       });
     }
 
     res.status(200).json({
       user: {
+        _id: employee.user._id,
         name: employee.user.name,
         email: employee.user.email,
         role: employee.user.role,
@@ -32,6 +36,6 @@ exports.getEmployeeProfile = async (req, res) => {
       },
     });
   } catch (err) {
-    res.status(500).json({ message: 'Error fetching profile', error: err.message });
+    res.status(500).json({ message: "Server Error", error: err.message });
   }
 };
