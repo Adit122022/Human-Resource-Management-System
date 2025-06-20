@@ -4,18 +4,15 @@ import AuthForm from "../Auth/AuthForm";
 import AdminDashboard from "../Dashboard/AdminDashboard";
 import HRDashboard from "../Dashboard/HRDashboard";
 import EmployeeDashboard from "../Dashboard/EmployeeDashboard";
-import EmployeeList from "../components/Employee/EmployeeList";
 import EmployeeForm from "../components/Employee/EmployeeeFrom";
-import AttendanceHistory from "../components/Attendance/AttendanceHistory";
 import AttendanceForm from "../components/Attendance/AttendanceForm";
-import LeaveHistory from "../components/Leave/LeaveHistory";
 import LeaveForm from "../components/Leave/LeaveForm";
 import Profile from "../components/Profile/Profile";
 import HeroSection from "../Pages/HeroSection";
 import AttendancePage from "../Pages/AttendancePage";
 import EmployeePage from "../Pages/EmployeePage";
 import LeavePage from "../Pages/LeavePage";
-import AdminLeaveApproval from "../components/Admin/AdminLeaveApproval";
+import LeaveApproved from "../Pages/LeaveApproved";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { isLoggedIn, user } = useAuthStore();
@@ -123,7 +120,7 @@ const AppRouter = () => {
         path="/admin/leave-approval"
         element={
           <ProtectedRoute allowedRoles={["admin", "hr"]}>
-            <AdminLeaveApproval />
+            <LeaveApproved />
           </ProtectedRoute>
         }
       />
